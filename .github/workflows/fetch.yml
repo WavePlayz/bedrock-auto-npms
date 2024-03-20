@@ -3,6 +3,7 @@ name: Update Readme
 on:
   schedule:
     - cron: '0 */12 * * *' # Run every 12 hours
+  workflow_dispatch: # Allow manual triggering
 
 jobs:
   update-readme:
