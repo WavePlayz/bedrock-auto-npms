@@ -1,0 +1,38 @@
+name: Update Readme
+
+on:
+  schedule:
+    - cron: '0 */12 * * *' # Run every 12 hours
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Fetch JSON data
+        run: |
+          # Replace 'url1' and 'url2' with your JSON URLs
+          wget -O data1.json url1
+          wget -O data2.json url2
+
+      - name: Extract versions
+        run: |
+          # Use a tool like jq to extract "versions" object keys from JSON
+          jq '.versions | keys' data1.json > versions1.txt
+          jq '.versions | keys' data2.json > versions2.txt
+
+      - name: Update Readme
+        run: |
+          # Use sed or another tool to update Readme.md with the extracted versions
+          sed -i 's/## Versions/## Versions\n\nVersions from data1.json:\n```\n$(cat versions1.txt)\n```\nVersions from data2.json:\n```\n$(cat versions2.txt)\n```/' Readme.md
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add Readme.md
+          git commit -m "Update versions in Readme"
+          git push
